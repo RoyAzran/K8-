@@ -1,0 +1,25 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: wordpress-deployment
+  namespace: ingress-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+      - name: wordpress
+        image: 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-repo:wordpress-latest
+        ports:
+        - containerPort: 80
+~
+~
