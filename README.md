@@ -8,7 +8,6 @@ This repo holds the YAML files I used to deploy WordPress and MariaDB on Kuberne
 - `wordpress.yml` – WordPress deployment/service  
 - `ingress.yml` – Ingress rules  
 - `get_helm.sh` – Helm install script  
-- `minikube-linux-amd64` – Minikube binary
 
 ## What I did
 1. Created the manifests (`stateful.yaml`, `dbservice.yaml`, `wordpress.yml`, `ingress.yml`).  
@@ -25,15 +24,27 @@ kubectl apply -f dbservice.yaml
 kubectl apply -f wordpress.yml
 kubectl apply -f ingress.yml
 ```
+### expose services 
+kubectl expose deployment/wordpress --port 80
+grafana already exposed to port 3000 by default
+
 
 ### Port-forward Grafana
 ```bash
-kubectl port-forward svc/stack-grafana 8080:80
-# open http://localhost:8080
+kubectl port-forward svc/stack-grafana 8079:80
+#ssh tunnling
+ ssh -i Roymain.pem -L 8079:localhost:8079# open http://localhost:8080
+open http://localhost:8079
 ```
 
 ### Port-forward WordPress
 ```bash
-kubectl port-forward svc/wordpress 8081:80
-# open http://localhost:8081
-```
+kubectl port-forward svc/wordpress 8080:80
+#ssh tunnling
+$ ssh -i Roymain.pem -L 80:localhost:8080 ec2-user@107.21.145.164
+# open http://localhost:80
+thogther :  ssh -i Roymain.pem \
+  -L 8079:localhost:8079 \
+  -L 80:localhost:8080 \
+  ec2-user@107.21.145.164
+  ```
