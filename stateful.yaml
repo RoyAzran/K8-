@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mariadb-sts
+spec:
+  serviceName: "mariadb-service"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: mariadb
+        image: 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-repo:mariadb-10.6.4
+        ports:
+        - containerPort: 3306
+          name: mariadb-port
+        env:
+          - name: MARIADB_ROOT_PASSWORD
+            value: "somewordpress"
+          - name: MARIADB_DATABASE
+            value: "wordpress"
+          - name: MARIADB_USER
+            value: "wordpress"
+          - name: MARIADB_PASSWORD
+            value: "wordpress"
+        volumeMounts:
+        - name: datadir
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 300Mi
